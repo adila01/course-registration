@@ -1,2 +1,2 @@
 # Course Registration
-The symbol of power for registering of courses
+Demo application for course registration
