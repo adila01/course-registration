@@ -2,4 +2,6 @@
 <mule-project xmlns="http://www.mulesoft.com/tooling/project" runtimeId="org.mule.tooling.server.3.8.0.ee" schemaVersion="5.3.0.0">
     <name>course-registration</name>
     <description></description>
+    <muleExtension name="Google Calendars" qualifier="org.mule.tooling.ui.contribution.google-calendars.3.5.0"/>
+    <muleExtension name="Amazon SQS" qualifier="org.mule.tooling.ui.contribution.sqs.3.5.0"/>
 </mule-project>
