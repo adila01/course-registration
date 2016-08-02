@@ -8,6 +8,8 @@
         <body>
                 <h1>Course Registration</h1>
 
+				<img src="img/header.png" alt="Header" />
+
 				<!-- Success or Failure Messages -->
                 <div id="success" style="background: green; display: none">SUCCESS</div>
                 <div id="failure" style="background: red; display: none">FAILURE</div>
