@@ -4,3 +4,4 @@ Demo application for course registration
 Code moved to
 ajaxPage - Adil's work
 sqsExample - Robert's example to show how to read / write to SQS
+studentapi - Robert's RAML / REST API for ajaxPage and writing to SQS
