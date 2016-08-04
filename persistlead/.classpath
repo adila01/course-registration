@@ -11,5 +11,6 @@
 	<classpathentry kind="src" path="src/main/wsdl"/>
 	<classpathentry kind="src" path="src/test/munit"/>
 	<classpathentry kind="con" path="MULE_LIB/Microsoft Dynamics CRM/org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
+	<classpathentry kind="con" path="MULE_LIB/Amazon SQS/org.mule.tooling.ui.contribution.sqs.3.5.0"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
