@@ -16,15 +16,15 @@
 				<!-- End of Success or Failure Messages -->
 
 				<!-- Course Registration Form -->
-                <form id="course-registration" action="api/course/registration" method="POST">
-                        First name: <input type="text" placeholder="John" name="first-name">
+                <form id="course-registration" action="http://sci-campusapi.cloudhub.io/api/campus/prospect" method="POST">
+                        First name: <input type="text" placeholder="John" id="first-name" name="firstname">
                         <br>
-                        Last name: <input type="text" placeholder="Smith" name="last-name">
+                        Last name: <input type="text" placeholder="Smith" id="last-name" name="lastname">
                         <br>
-                        Phone number: <input type="tel" placeholder="123-456-7890" name="phone-number">
+                        Phone number: <input type="tel" placeholder="123-456-7890" id="phone-number" name="phonenumber">
                         <br>
                         Subject/Course:
-                                <select name="subject-course">
+                                <select id="subject-course" name="subjectcourse">
                                   <option value="computerscience">Computer Science</option>
                                   <option value="electricalenginering">Electrical Engineering</option>
                                   <option value="geology">Geology</option>
@@ -43,15 +43,20 @@
                         $("#course-registration").submit(function(e)
                         {
                                 var url = $(this).attr("action");
-                                var data = new FormData(this);
+                                var json = {
+										      "firstname": $("#first-name").val(),
+										      "lastname": $("#last-name").val(),
+										      "phonenumber": $("#phone-number").val(),
+										      "subjectcourse": $("#subject-course option:selected").text()
+                                	};
+								var jsonString = JSON.stringify(json);
+                                
                                 $.ajax({
                                         url: url,
                                         type: 'POST',
-                                        data:  data,
-                                        mimeType:"multipart/form-data",
-                                        contentType: false,
-                                        cache: false,
-                                        processData:false,
+                                        data:  jsonString,
+                                        dataType: 'json',
+                                        contentType: 'application/json',
                                         success: function(data, textStatus, jqXHR)
                                         {
                                                 $("#course-registration").hide();
@@ -64,7 +69,6 @@
                                         }          
                                 });
                                 e.preventDefault();
-                                e.unbind();
                         });
                 </script>
         </body>
