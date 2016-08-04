@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8093" doc:name="HTTP Listener Configuration"/>
+    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="vishwannToBeUpdated" password="vishwannToBeUpdated" organizationServiceUrl="vishwannToBeUpdated" doc:name="Microsoft Dynamics CRM: Online Connection"/>
+    
+    <flow name="queryleadFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/queryleads" doc:name="HTTP"/>
+        <logger message="***************Before MS Dynamics Query Leads Invocation*******************" level="INFO" doc:name="Logger"/>
+        <dynamicscrm:retrieve-multiple-by-query config-ref="Microsoft_Dynamics_CRM__Online_Connection" query="dsql:SELECT firstname,fullname,lastname,leadid,statuscode,subject,telephone1 FROM lead WHERE statuscode = 1" doc:name="Microsoft Dynamics CRM"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="**********************Result Set Leads - #[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
