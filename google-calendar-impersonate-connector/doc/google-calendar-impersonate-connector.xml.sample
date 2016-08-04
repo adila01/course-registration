@@ -1,0 +1,6 @@
+<!-- BEGIN_INCLUDE(google-calendar-impersonate:greet) -->
+    <google-calendar-impersonate:greet config-ref="" friend="#[map-payload:friend]" />
+<!-- END_INCLUDE(google-calendar-impersonate:greet) -->
+<!-- BEGIN_INCLUDE(google-calendar-impersonate:add-entity) -->
+    <google-calendar-impersonate:add-entity config-ref="" key="id1"/>
+<!-- END_INCLUDE(google-calendar-impersonate:add-entity) -->
