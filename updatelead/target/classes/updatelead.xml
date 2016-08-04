@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8092" doc:name="HTTP Listener Configuration"/>
+    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="vishwannUser" password="vishwannPassword" organizationServiceUrl="Vishwan" doc:name="Microsoft Dynamics CRM: Online Connection"/>
+    <flow name="updateleadFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/updateLead" doc:name="HTTP"/>
+        <logger message="****************** Lead ID ************** #[message.inboundProperties.'http.query.params'.leadId]" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+statuscode:2]]></dw:set-payload>
+        </dw:transform-message>
+        <dynamicscrm:update config-ref="Microsoft_Dynamics_CRM__Online_Connection" id="#[message.inboundProperties.'http.query.params'.leadId]" logicalName="lead" doc:name="Microsoft Dynamics CRM"/>
+    </flow>
+</mule>
