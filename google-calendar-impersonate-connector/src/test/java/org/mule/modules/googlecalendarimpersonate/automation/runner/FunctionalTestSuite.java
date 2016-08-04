@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.mule.modules.googlecalendarimpersonate.automation.functional.AddEntityTestCases;
-import org.mule.modules.googlecalendarimpersonate.automation.functional.GreetTestCases;
 import org.mule.modules.googlecalendarimpersonate.GoogleCalendarImpersonateConnector;
 import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
@@ -14,7 +13,6 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 @SuiteClasses({
 	AddEntityTestCases.class,
 
-GreetTestCases.class
 })
 
 public class FunctionalTestSuite {

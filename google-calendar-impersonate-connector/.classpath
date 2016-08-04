@@ -13,7 +13,7 @@
 	<classpathentry kind="var" path="M2_REPO/javax/annotation/javax.annotation-api/1.2/javax.annotation-api-1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0.1/javax.ws.rs-api-2.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java SE 7 [1.7.0_79]"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/apis/google-api-services-calendar/v3-rev204-1.22.0/google-api-services-calendar-v3-rev204-1.22.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/api-client/google-api-client/1.22.0/google-api-client-1.22.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/oauth-client/google-oauth-client/1.22.0/google-oauth-client-1.22.0.jar"/>
@@ -149,16 +149,15 @@
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-frontend-simple/2.7.15/cxf-rt-frontend-simple-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-bindings-soap/2.7.15/cxf-rt-bindings-soap-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-databinding-jaxb/2.7.15/cxf-rt-databinding-jaxb-2.7.15.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/sun/xml/bind/jaxb-impl/2.2.6/jaxb-impl-2.2.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/sun/xml/bind/jaxb-impl/2.1.13/jaxb-impl-2.1.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-frontend-jaxws/2.7.15/cxf-rt-frontend-jaxws-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/xml-resolver/xml-resolver/1.2/xml-resolver-1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-bindings-xml/2.7.15/cxf-rt-bindings-xml-2.7.15.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-transports-http/2.7.15/cxf-rt-transports-http-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-ws-addr/2.7.15/cxf-rt-ws-addr-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-ws-policy/2.7.15/cxf-rt-ws-policy-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/neethi/neethi/3.0.3/neethi-3.0.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-databinding-aegis/2.7.15/cxf-rt-databinding-aegis-2.7.15.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/sun/xml/bind/jaxb-xjc/2.2.6/jaxb-xjc-2.2.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/sun/xml/bind/jaxb-xjc/2.1.13/jaxb-xjc-2.1.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-databinding-jibx/2.7.15/cxf-rt-databinding-jibx-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-tools-common/2.7.15/cxf-tools-common-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jibx/jibx-run/1.2.5/jibx-run-1.2.5.jar"/>
@@ -177,6 +176,7 @@
 	<classpathentry kind="var" path="M2_REPO/xalan/serializer/2.7.1/serializer-2.7.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-ws-rm/2.7.15/cxf-rt-ws-rm-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-management/2.7.15/cxf-rt-management-2.7.15.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-rt-transports-http/2.7.15/cxf-rt-transports-http-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-wstx-msv-validation/2.7.15/cxf-wstx-msv-validation-2.7.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/java/dev/msv/msv-core/2011.1/msv-core-2011.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sun/msv/datatype/xsd/xsdlib/2010.1/xsdlib-2010.1.jar"/>
