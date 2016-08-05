@@ -9,13 +9,19 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8093" doc:name="HTTP Listener Configuration"/>
-    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="vishwannToBeUpdated" password="vishwannToBeUpdated" organizationServiceUrl="vishwannToBeUpdated" doc:name="Microsoft Dynamics CRM: Online Connection"/>
+    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="${dynamics.crm.username}" password="${dynamics.crm.password}" organizationServiceUrl="${dynamics.crm.organizationServiceUrl}" doc:name="Microsoft Dynamics CRM: Online Connection"/>
     
     <flow name="queryleadFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/queryleads" doc:name="HTTP"/>
         <logger message="***************Before MS Dynamics Query Leads Invocation*******************" level="INFO" doc:name="Logger"/>
+        <flow-ref name="queryleadSub_Flow" doc:name="queryleadSub_Flow"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="#[message.exception.getMessage()]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+    <sub-flow name="queryleadSub_Flow">
         <dynamicscrm:retrieve-multiple-by-query config-ref="Microsoft_Dynamics_CRM__Online_Connection" query="dsql:SELECT firstname,fullname,lastname,leadid,statuscode,subject,telephone1 FROM lead WHERE statuscode = 1" doc:name="Microsoft Dynamics CRM"/>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <logger message="**********************Result Set Leads - #[payload]" level="INFO" doc:name="Logger"/>
-    </flow>
+    </sub-flow>
 </mule>

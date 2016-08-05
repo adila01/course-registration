@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8091" doc:name="HTTP Listener Configuration"/>
+    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="${dynamics.crm.username}" password="${dynamics.crm.password}" organizationServiceUrl="${dynamics.crm.organizationServiceUrl}" doc:name="Microsoft Dynamics CRM: Online Connection"/>
+    <sqs:config name="Amazon_SQS__Configuration" accessKey="${aws.sqs.key}" secretKey="${aws.sqs.secret}" defaultQueueName="${aws.sqs.queue}" url="${aws.sqs.url}" region="${aws.sqs.region}" doc:name="Amazon SQS: Configuration"/>
+    <flow name="persistleadFlowQueue">
+        <sqs:receive-messages config-ref="Amazon_SQS__Configuration" doc:name="Amazon SQS (Streaming)"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="persistleadSub_Flow" doc:name="persistleadSub_Flow"/>
+        <catch-exception-strategy doc:name="persistleadCatch_Exception_Strategy">
+            <logger message="#[message.exception.getMessage()]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+    <flow name="persistleadFlowHTTP">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/saveLead" doc:name="HTTP"/>
+        <logger message="***** ***** ***** ***** ***** HTTP Message is Received ***** ***** ***** ***** ***** ==Payload #[payload] ***** ***** ***** ***** *****" level="INFO" doc:name="Logger"/>
+        <flow-ref name="persistleadSub_Flow" doc:name="persistleadSub_Flow"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="#[message.exception.getMessage()]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+    <sub-flow name="persistleadSub_Flow">
+        <dw:transform-message doc:name="Transform Queue Message" metadata:id="e49210c5-67aa-4c7d-9e9a-209c96302fd8">
+            <dw:input-payload doc:sample="sample_data\json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload
+
+]]></dw:set-payload>
+        </dw:transform-message>
+        <dynamicscrm:create config-ref="Microsoft_Dynamics_CRM__Online_Connection" logicalName="lead" doc:name="Microsoft Dynamics CRM"/>
+        <logger message="***** ***** ***** ***** ***** Record inserted into MS Dynamics***** ***** ***** ***** *****" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+</mule>
