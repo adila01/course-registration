@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8090" doc:name="HTTP Listener Configuration"/>
+    <sqs:config name="Amazon_SQS__Configuration" accessKey="${aws.sqs.key}" secretKey="${aws.sqs.secret}" defaultQueueName="${aws.sqs.queue}" url="${aws.sqs.url}" region="${aws.sqs.region}" doc:name="Amazon SQS: Configuration"/>
+    <flow name="publish-requestFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/publish" doc:name="HTTP"/>
+        <set-variable variableName="sampleJson" value="{&quot;firstname&quot;: &quot;John&quot;,&quot;lastname&quot;: &quot;Smith&quot;,&quot;phonenumber&quot;: &quot;2342341111&quot;,&quot;subjectcourse&quot;: &quot;Computer Science&quot;}" doc:name="Variable sampleJson"/>
+        <set-payload doc:name="Set Payload" value="#[flowVars.sampleJson]"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="publish-requestSub_Flow" doc:name="publish-requestSub_Flow"/>
+    </flow>
+    <sub-flow name="publish-requestSub_Flow">
+        <logger message="The payload: #[payload]" level="INFO" doc:name="Logger"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	messageBody: payload
+} as :object {
+	class : "org.mule.modules.sqs.model.Message"
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <sqs:send-message config-ref="Amazon_SQS__Configuration" doc:name="Amazon SQS"/>
+    </sub-flow>
+</mule>
