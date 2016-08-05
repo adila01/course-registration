@@ -1,7 +1,9 @@
 package org.mule.modules.googlecalendarimpersonate;
 
 import java.io.*;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -9,6 +11,7 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -20,6 +23,11 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.*;
 
 public class GoogleCalClient {
+	private static final List<String> serviceAccountScopes = Arrays.asList("https://www.googleapis.com/auth/calendar"); 
+
+	private static final String EMAIL_ADRESS =
+			"foo@foo.com";
+	
     /** Application name. */
     private static final String APPLICATION_NAME =
         "MuleSoft Calendar Connector";
@@ -85,12 +93,22 @@ public class GoogleCalClient {
     * Build and return an authorized Calendar client service.
     * @return an authorized Calendar client service
     * @throws IOException
+ * @throws GeneralSecurityException 
     */
    public static com.google.api.services.calendar.Calendar
-       getCalendarService() throws IOException {
-       Credential credential = authorize();
+       getCalendarService() throws IOException, GeneralSecurityException {
+	   GoogleCredential serviceAccount = new GoogleCredential.Builder()
+			   .setTransport(HTTP_TRANSPORT)
+			   .setJsonFactory(JSON_FACTORY)
+			   .setServiceAccountId("foo") 
+			   .setServiceAccountUser(EMAIL_ADRESS)
+			   .setServiceAccountScopes(serviceAccountScopes)
+			   .setServiceAccountPrivateKeyFromP12File(new File("/tmp/gcal.p12"))
+			   .build();
+	   
+//       Credential credential = authorize();
        return new com.google.api.services.calendar.Calendar.Builder(
-               HTTP_TRANSPORT, JSON_FACTORY, credential)
+               HTTP_TRANSPORT, JSON_FACTORY, serviceAccount)
                .setApplicationName(APPLICATION_NAME)
                .build();
    }

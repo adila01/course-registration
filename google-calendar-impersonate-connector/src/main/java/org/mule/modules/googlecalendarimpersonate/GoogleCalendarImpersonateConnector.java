@@ -1,5 +1,7 @@
 package org.mule.modules.googlecalendarimpersonate;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
@@ -15,28 +17,35 @@ import org.mule.api.annotations.param.Default;
 import org.mule.modules.googlecalendarimpersonate.config.ConnectorConfig;
 import org.mule.modules.googlecalendarimpersonate.error.ErrorHandler;
 
+import com.google.api.services.calendar.Calendar.CalendarList.List;
+import com.google.api.services.calendar.model.CalendarList;
+
 @Connector(name="google-calendar-impersonate", friendlyName="GoogleCalendarImpersonate")
 @MetaDataScope( DataSenseResolver.class )
 @OnException(handler=ErrorHandler.class)
 public class GoogleCalendarImpersonateConnector {
 
+	private com.google.api.services.calendar.Calendar client;
+	
     @Config
     ConnectorConfig config;
 
     /**
      * Custom processor
      *
-     * @param friend Name to be used to generate a greeting message.
-     * @return A greeting message
+     * @return Get a list of calendars
+     * @throws IOException 
+     * @throws GeneralSecurityException 
      */
     @Processor
-    public String greet(String friend) {
-        /*
-         * MESSAGE PROCESSOR CODE GOES HERE
-         */
-        return config.getGreeting() + " " + friend + ". " + config.getReply();
+    public List getCalendars() throws IOException, GeneralSecurityException
+    {
+    	if (client == null)
+    		client = GoogleCalClient.getCalendarService();
+    	
+    	return client.calendarList().list();
     }
-
+    
     /**
      * DataSense processor
 
