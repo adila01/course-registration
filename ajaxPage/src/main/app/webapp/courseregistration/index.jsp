@@ -17,19 +17,21 @@
 
 				<!-- Course Registration Form -->
                 <form id="course-registration" action="http://sci-campusapi.cloudhub.io/api/campus/prospect" method="POST">
-                        First name: <input type="text" placeholder="John" id="first-name" name="firstname">
+                        First name: <input id="first-name" type="text" placeholder="John">
                         <br>
-                        Last name: <input type="text" placeholder="Smith" id="last-name" name="lastname">
+                        Last name: <input id="last-name" type="text" placeholder="Smith">
                         <br>
-                        Phone number: <input type="tel" placeholder="123-456-7890" id="phone-number" name="phonenumber">
+                        Phone number: <input id="phone-number" type="tel" placeholder="1234567890">
+                        <br>
+                        Email Address: <input id="email" type="email" placeholder="john.smith@unknown.com">
                         <br>
                         Subject/Course:
                                 <select id="subject-course" name="subjectcourse">
-                                  <option value="computerscience">Computer Science</option>
-                                  <option value="electricalenginering">Electrical Engineering</option>
-                                  <option value="geology">Geology</option>
-                                  <option value="humanities">Humanities</option>
-                                  <option value="philosophy">Philosophy</option>
+                                  <option>Computer Science</option>
+                                  <option>Electrical Engineering</option>
+                                  <option>Geology</option>
+                                  <option>Humanities</option>
+                                  <option>Philosophy</option>
                                 </select>
                         <br>
                         <input type="checkbox" name="agreement"> I agree that I may potentially receive text messages
@@ -47,6 +49,7 @@
 										      "firstname": $("#first-name").val(),
 										      "lastname": $("#last-name").val(),
 										      "phonenumber": $("#phone-number").val(),
+										      "email": $("#email").val(),
 										      "subjectcourse": $("#subject-course option:selected").text()
                                 	};
 								var jsonString = JSON.stringify(json);
