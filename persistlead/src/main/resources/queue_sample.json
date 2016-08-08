@@ -1,6 +1,7 @@
 {
   "firstname": "John",
   "lastname": "Smith",
-  "phonenumber": "234234",
+  "phonenumber": "1234567890",
+  "email": "john.smith@unknown.com",
   "subjectcourse": "Computer Science"
 }

@@ -4,4 +4,10 @@
     <description></description>
     <muleExtension name="Microsoft Dynamics CRM" qualifier="org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
     <muleExtension name="Amazon SQS" qualifier="org.mule.tooling.ui.contribution.sqs.3.5.0"/>
+    <muleExtension name="Microsoft Dynamics CRM" qualifier="org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
+    <muleExtension name="Microsoft Dynamics CRM" qualifier="org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
+    <muleExtension name="Microsoft Dynamics CRM" qualifier="org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
+    <muleExtension name="Microsoft Dynamics CRM" qualifier="org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
+    <muleExtension name="Microsoft Dynamics CRM" qualifier="org.mule.tooling.ui.contribution.dynamicscrm.3.7.0"/>
+    <muleExtension name="Secure Property Placeholder" qualifier="org.mule.tooling.ui.contribution.secure-property-placeholder.3.7.3"/>
 </mule-project>
