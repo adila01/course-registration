@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:cors="http://www.mulesoft.org/schema/mule/cors" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:cors="http://www.mulesoft.org/schema/mule/cors" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd
 http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd">
     <http:listener-config name="api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
     <apikit:config name="api-config" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router" />
     <cors:config name="Cors_Configuration" doc:name="Cors Configuration">
@@ -24,8 +25,9 @@ http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee
             </cors:origin>
         </cors:origins>
     </cors:config>
-    <sqs:config name="Amazon_SQS__Configuration" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="webLeads" url="https://sqs.us-east-1.amazonaws.com/728515249256/webLeads" region="USEAST1" doc:name="Amazon SQS: Configuration" />
-    <sqs:config name="Amazon_SQS__Configuration2" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="calendarRequest" url="https://sqs.us-east-1.amazonaws.com/728515249256/calendarRequest" region="USEAST1" doc:name="Amazon SQS: Configuration" />
+    <sqs:config name="Amazon_SQS__Configuration" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${lead.queue.name}" url="${lead.queue.url}" region="USEAST1" doc:name="Amazon SQS: Configuration" />
+    <sqs:config name="Amazon_SQS__Configuration2" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${prospect.queue.name}" url="${prospect.queue.url}" region="USEAST1" doc:name="Amazon SQS: Configuration" />
+    <secure-property-placeholder:config name="Secure_Property_Placeholder" key="${securePropsKey}" location="creds.properties" doc:name="Secure Property Placeholder"/>
     <flow name="api-main">
         <http:listener config-ref="api-httpListenerConfig" path="/api/*" doc:name="HTTP" />
         <set-property doc:name="Access-Control-Allow-Origin" propertyName="Access-Control-Allow-Origin" value="*" />

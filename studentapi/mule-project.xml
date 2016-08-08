@@ -3,4 +3,5 @@
     <name>studentAPI</name>
     <description></description>
     <muleExtension name="Amazon SQS" qualifier="org.mule.tooling.ui.contribution.sqs.3.5.0"/>
+    <muleExtension name="Secure Property Placeholder" qualifier="org.mule.tooling.ui.contribution.secure-property-placeholder.3.6.0"/>
 </mule-project>
