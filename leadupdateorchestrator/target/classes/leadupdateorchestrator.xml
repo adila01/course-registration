@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
@@ -9,13 +9,15 @@ http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
-http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd">
     <!-- <sqs:config name="Amazon_SQS__Configuration" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${update.inbound.queue.name}" url="${update.inbound.queue.url}" region="${update.inbound.queue.region}" doc:name="Amazon SQS: Configuration"/>
     -->
     <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8085" doc:name="HTTP Listener Configuration"/>
     <sqs:config name="Amazon_SQS__Configuration1" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${update.inbound.queue.name}" url="${update.inbound.queue.url}" region="USEAST1" doc:name="Amazon SQS: Configuration"/>
     <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="${dynamics.crm.username}" password="${dynamics.crm.password}" organizationServiceUrl="https://sierrademo1.crm3.dynamics.com/XRMServices/2011/Organization.svc" doc:name="Microsoft Dynamics CRM: Online Connection"/>
     <sqs:config name="Amazon_SQS__Configuration_CalQueue" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${update.outbound.queue.name}" url="https://sqs.us-east-1.amazonaws.com/728515249256/calendarRequest" region="USEAST1" doc:name="Amazon SQS: Configuration"/>
+    <secure-property-placeholder:config name="Secure_Property_Placeholder" key="${key}" location="mule.properties" doc:name="Secure Property Placeholder"/>
     <flow name="leadupdateorchestratorFlow">
         <sqs:receive-messages config-ref="Amazon_SQS__Configuration1" doc:name="Amazon SQS (Streaming)"/>
         <logger message="**** Message Read from the Queue**** #[payload]" level="INFO" doc:name="Logger"/>
