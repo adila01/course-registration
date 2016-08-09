@@ -1,0 +1,6 @@
+<!-- BEGIN_INCLUDE(google-calendar-service:calendar-list) -->
+    <google-calendar-service:calendar-list config-ref="" />
+<!-- END_INCLUDE(google-calendar-service:calendar-list) -->
+<!-- BEGIN_INCLUDE(google-calendar-service:course) -->
+    <google-calendar-service:course config-ref="" calendarId=""/>
+<!-- END_INCLUDE(google-calendar-service:course) -->

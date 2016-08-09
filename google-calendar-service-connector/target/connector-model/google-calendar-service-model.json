@@ -1,0 +1,104 @@
+{
+  "minMuleVersion": "3.5.0",
+  "requiresEntitlement": false,
+  "requiresEnterpriseLicense": false,
+  "configs": [
+    {
+      "configElementName": "config",
+      "attributes": [
+        {
+          "javaTypeName": "String",
+          "fullQualifiedJavaTypeName": "java.lang.String",
+          "isOptional": false,
+          "isRefOnly": false,
+          "isPayload": false,
+          "isComplexType": false,
+          "isEnum": false,
+          "isString": true,
+          "typeMirror": "java.lang.String",
+          "isHttpCallback": false,
+          "isArrayOrListOrMap": false,
+          "javaName": "serviceAccountId",
+          "description": "Service Account Id"
+        }
+      ],
+      "javaName": "ConnectorConfig",
+      "friendlyName": "Configuration",
+      "type": "ConfigurationConfig"
+    }
+  ],
+  "attributes": [],
+  "processors": [
+    {
+      "isPaged": false,
+      "isBatch": false,
+      "samples": [
+        "\u003cgoogle-calendar-service:calendar-list config-ref\u003d\"\" /\u003e"
+      ],
+      "javaReturnType": {
+        "javaTypeName": "List\u003cCalendarListEntry\u003e",
+        "fullQualifiedJavaTypeName": "java.util.List\u003ccom.google.api.services.calendar.model.CalendarListEntry\u003e",
+        "isOptional": false,
+        "isRefOnly": false,
+        "isPayload": false,
+        "isComplexType": false,
+        "isEnum": false,
+        "isString": false,
+        "isHttpCallback": false,
+        "description": "Get a list of calendars"
+      },
+      "parameters": [],
+      "apiDocUrl": "",
+      "javaName": "calendarList",
+      "friendlyName": "Calendar list",
+      "description": "Return Calendar List",
+      "xsdName": "calendar-list"
+    },
+    {
+      "isPaged": false,
+      "isBatch": false,
+      "samples": [
+        "\u003cgoogle-calendar-service:course config-ref\u003d\"\" calendarId\u003d\"\"/\u003e"
+      ],
+      "javaReturnType": {
+        "javaTypeName": "Map\u003cString,Object\u003e",
+        "fullQualifiedJavaTypeName": "java.util.Map\u003cjava.lang.String,java.lang.Object\u003e",
+        "isOptional": false,
+        "isRefOnly": false,
+        "isPayload": false,
+        "isComplexType": false,
+        "isEnum": false,
+        "isString": false,
+        "isHttpCallback": false,
+        "description": "a class"
+      },
+      "parameters": [
+        {
+          "javaTypeName": "String",
+          "fullQualifiedJavaTypeName": "java.lang.String",
+          "isOptional": false,
+          "isRefOnly": false,
+          "isPayload": false,
+          "isComplexType": false,
+          "isEnum": false,
+          "isString": true,
+          "typeMirror": "java.lang.String",
+          "isHttpCallback": false,
+          "isArrayOrListOrMap": false,
+          "javaName": "calendarId"
+        }
+      ],
+      "apiDocUrl": "",
+      "javaName": "course",
+      "friendlyName": "Course",
+      "description": "Return A Class",
+      "xsdName": "course"
+    }
+  ],
+  "filters": [],
+  "transformers": [],
+  "sources": [],
+  "javaName": "GoogleCalendarServiceConnector",
+  "friendlyName": "Google Calendar Service",
+  "xsdName": "google-calendar-service"
+}

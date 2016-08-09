@@ -1,0 +1,1 @@
+http\://www.mulesoft.org/schema/mule/google-calendar-service=com.sierracedar.connectors.googlecalendarservice.generated.config.GoogleCalendarServiceNamespaceHandler
