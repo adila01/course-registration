@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd">
+    <sqs:config name="Amazon_SQS__Configuration" accessKey="${aws.sqs.key}" secretKey="${aws.sqs.secret}" defaultQueueName="${aws.sqs.queue}" url="${aws.sqs.url}" region="${aws.sqs.region}" doc:name="Amazon SQS: Configuration"/>
+    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="${dynamics.crm.username}" password="${dynamics.crm.password}" organizationServiceUrl="${dynamics.crm.organizationServiceUrl}" doc:name="Microsoft Dynamics CRM: Online Connection"/>
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
+    <secure-property-placeholder:config name="Secure_Property_Placeholder" key="${key}" location="mule.properties" doc:name="Secure Property Placeholder"/>
+    <flow name="persistleadQueueFlow">
+        <sqs:receive-messages config-ref="Amazon_SQS__Configuration" doc:name="Amazon SQS (Streaming)"/>
+        <logger message="Payload: #[payload]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="persistleadSub_Flow" doc:name="persistleadSub_Flow"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="Error from Queue: #[message.exception.getMessage()]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+    <flow name="persistleadHTTPFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/persistlead" doc:name="HTTP"/>
+        <set-variable variableName="tempLeadData" value="{&quot;firstname&quot;: &quot;John&quot;, &quot;lastname&quot;: &quot;Smith&quot;, &quot;phonenumber&quot;: &quot;234234&quot;, &quot;subjectcourse&quot;: &quot;Computer Science&quot;}" doc:name="tempLeadData Variable"/>
+        <set-payload value="#[flowVars.tempLeadData]" doc:name="Set Payload"/>
+        <flow-ref name="persistleadSub_Flow" doc:name="persistleadSub_Flow"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="Error from HTTP: #[message.exception.getMessage()]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+    <sub-flow name="persistleadSub_Flow">
+        <json:object-to-json-transformer mimeType="application/json" doc:name="Object to JSON"/>
+        <dw:transform-message metadata:id="191fb5a6-e9ef-4f73-9ebd-c97470a68417" doc:name="Transform Message">
+            <dw:input-payload doc:sample="queue_sample.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	subject: payload.subjectcourse,
+	firstname: payload.firstname,
+	lastname: payload.lastname,
+	emailaddress1: payload.email,
+	telephone1: payload.phonenumber
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <dynamicscrm:create config-ref="Microsoft_Dynamics_CRM__Online_Connection" doc:name="Microsoft Dynamics CRM" logicalName="lead"/>
+        <logger message="Inserted Dynamics record...." level="INFO" doc:name="Logger"/>
+    </sub-flow>
+</mule>
