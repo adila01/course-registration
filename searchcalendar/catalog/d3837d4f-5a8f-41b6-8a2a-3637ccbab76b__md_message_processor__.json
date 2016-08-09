@@ -1,0 +1,18 @@
+{
+    "inputMessageMetadata": {
+        "outboundProperties": {
+            "subjectcourse": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "subjectcourse"
+            }
+        }
+    },
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "calendarlist"
+        }
+    },
+    "id": "d3837d4f-5a8f-41b6-8a2a-3637ccbab76b",
+    "version": "5.2.0.0"
+}

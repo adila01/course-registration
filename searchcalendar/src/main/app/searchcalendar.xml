@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:google-calendar-service="http://www.mulesoft.org/schema/mule/google-calendar-service" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:google-calendars="http://www.mulesoft.org/schema/mule/google-calendars" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/google-calendar-service http://www.mulesoft.org/schema/mule/google-calendar-service/current/mule-google-calendar-service.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+
+    <flow name="readqueue" initialState="started">
+        <sqs:receive-messages config-ref="Amazon_SQS_CalenderRequest" doc:name="Amazon SQS"/>
+        <flow-ref name="searchcalendar" doc:name="findcourse"/>
+    </flow>
+    <flow name="searchcalendar" initialState="started" processingStrategy="synchronous">
+        <json:json-to-object-transformer returnClass="com.sierracedar.searchcalendar.model.AJAXRequest" doc:name="JSON to Object"/>
+        <set-variable variableName="request" value="#[payload]" doc:name="Save Request"/>
+        <enricher source="#[payload.calendarlist.get(0).get(&quot;calenderid&quot;)]" target="#[flowVars.calendarid]" doc:name="Message Enricher">
+            <flow-ref name="getcalendarid" doc:name="getcalendarid"/>
+        </enricher>
+        <google-calendar-service:course config-ref="GoogleCalendarServiceConfiguration" calendarId="#[flowVars.calendarid]" doc:name="Find Course"/>
+        <dw:transform-message metadata:id="c555a565-3099-4e21-a2ca-3e0136f4ecda" doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	phonenumber: flowVars.request.telephone1,
+	name: payload["summary"],
+	start: convertToString(payload["start"].dateTime),
+	end: convertToString(payload["end"].dateTime)
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	messageBody: write(payload,"application/json")
+} as :object {
+	class : "org.mule.modules.sqs.model.Message"
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <flow-ref name="sendqueue" doc:name="sendtoqueue"/>
+    </flow>
+    <flow name="getcalendarid" initialState="started" processingStrategy="synchronous">
+        <set-property propertyName="subject" value="#[payload.subject]" doc:name="Save Subject"/>
+        <ee:cache doc:name="Cache">
+            <google-calendar-service:calendar-list config-ref="GoogleCalendarServiceConfiguration" doc:name="Get All Calendars"/>
+            <dw:transform-message metadata:id="d3837d4f-5a8f-41b6-8a2a-3637ccbab76b" doc:name="Transform Message">
+                <dw:input-outbound-property propertyName="subjectcourse"/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	calendarlist: payload map ((payload01 , indexOfPayload01) -> {
+		calenderid: payload01.id,
+		summary: payload01.summary
+	}) filter $.summary == outboundProperties.subject
+}]]></dw:set-payload>
+            </dw:transform-message>
+        </ee:cache>
+    </flow>
+    <flow name="sendqueue">
+        <sqs:send-message config-ref="Amazon_SQS_TwilloRequest" doc:name="Amazon SQS"/>
+    </flow>
+</mule>

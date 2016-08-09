@@ -1,0 +1,11 @@
+{
+    "inputMessageMetadata": {},
+    "outputMessageMetadata": {
+        "messagePayload": {
+            "connectorName": "#_custom_mule_metadata_type_#",
+            "typeId": "calendarresponse"
+        }
+    },
+    "id": "c555a565-3099-4e21-a2ca-3e0136f4ecda",
+    "version": "5.2.0.0"
+}

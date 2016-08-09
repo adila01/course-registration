@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:google-calendar-service="http://www.mulesoft.org/schema/mule/google-calendar-service"
+	xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs"
+	xmlns:secure-property-placeholder="http://www.mulesoft.org/schema/mule/secure-property-placeholder"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/google-calendar-service http://www.mulesoft.org/schema/mule/google-calendar-service/current/mule-google-calendar-service.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mulesoft.org/schema/mule/secure-property-placeholder/current/mule-secure-property-placeholder.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <sqs:config name="Amazon_SQS_CalenderRequest" accessKey="${sqs.accessKey}" secretKey="${sqs.secreteKey}" doc:name="Amazon SQS: Configuration" defaultQueueName="calendarRequest" region="USEAST1" url="https://sqs.us-east-1.amazonaws.com/728515249256/calendarRequest"/>
+    <sqs:config name="Amazon_SQS_TwilloRequest" accessKey="${sqs.accessKey}" secretKey="${sqs.secreteKey}" doc:name="Amazon SQS: Configuration" defaultQueueName="calendarResponse" region="USEAST1" url="https://sqs.us-east-1.amazonaws.com/728515249256/twilioRequest"/>
+    <secure-property-placeholder:config doc:name="Properties" key="${key}" location="searchcalendar.properties" name="Properties"/>
+    <google-calendar-service:config name="GoogleCalendarServiceConfiguration" serviceAccountId="calendar@calendar-1470623418474.iam.gserviceaccount.com" doc:name="GoogleCalendarService: Configuration"/>
+    
+    <configuration doc:name="Configuration">
+      <expression-language>
+          <global-functions>
+                def convertToString(value) {
+                    return value.toString();
+                }
+             </global-functions>
+      </expression-language>
+    </configuration>
+</mule>
