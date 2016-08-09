@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:dynamicscrm="http://www.mulesoft.org/schema/mule/dynamicscrm" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/dynamicscrm http://www.mulesoft.org/schema/mule/dynamicscrm/current/mule-dynamicscrm.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <!-- <sqs:config name="Amazon_SQS__Configuration" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${update.inbound.queue.name}" url="${update.inbound.queue.url}" region="${update.inbound.queue.region}" doc:name="Amazon SQS: Configuration"/>
+    -->
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8085" doc:name="HTTP Listener Configuration"/>
+    <sqs:config name="Amazon_SQS__Configuration1" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${update.inbound.queue.name}" url="${update.inbound.queue.url}" region="USEAST1" doc:name="Amazon SQS: Configuration"/>
+    <dynamicscrm:online-connection-config name="Microsoft_Dynamics_CRM__Online_Connection" username="${dynamics.crm.username}" password="${dynamics.crm.password}" organizationServiceUrl="https://sierrademo1.crm3.dynamics.com/XRMServices/2011/Organization.svc" doc:name="Microsoft Dynamics CRM: Online Connection"/>
+    <sqs:config name="Amazon_SQS__Configuration_CalQueue" accessKey="${sqs.key}" secretKey="${sqs.secret}" defaultQueueName="${update.outbound.queue.name}" url="https://sqs.us-east-1.amazonaws.com/728515249256/calendarRequest" region="USEAST1" doc:name="Amazon SQS: Configuration"/>
+    <flow name="leadupdateorchestratorFlow">
+        <sqs:receive-messages config-ref="Amazon_SQS__Configuration1" doc:name="Amazon SQS (Streaming)"/>
+        <logger message="**** Message Read from the Queue**** #[payload]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="leadupdateorchestratorSub_Flow" doc:name="leadupdateorchestratorSub_Flow"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <logger message="**************** Exception Occured ******* #[message.exception.getMessage()]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </flow>
+    <sub-flow name="leadupdateorchestratorSub_Flow">
+        <logger message="****** Query Results based on Lead ID is started *****" level="INFO" doc:name="Logger"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <set-variable variableName="lead" value="#[json:leadId]" doc:name="Variable"/>
+        <logger message="******Input Lead Value ****** #[flowVars.lead] *****" level="INFO" doc:name="Logger"/>
+        <dynamicscrm:retrieve config-ref="Microsoft_Dynamics_CRM__Online_Connection"   doc:name="Microsoft Dynamics CRM" id="#[flowVars.lead]" logicalName="lead"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="**********************Result Set Leads  **** Query Sub Flow is completed" level="INFO" doc:name="Logger"/>
+        <flow-ref name="leadupdateorchestratorSub_Flow1" doc:name="leadupdateorchestratorSub_Flow1"/>
+    </sub-flow>
+    <sub-flow name="leadupdateorchestratorSub_Flow1">
+        <logger message=" ***** Update Date into calendarRequest Queue Flow Starts **** " level="INFO" doc:name="Logger"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	"firstname":payload.firstname,
+	"lastname":payload.lastname,
+	"mobilephone":payload.mobilephone,
+     "telephone1":payload.telephone1,
+     "subject":payload.subject
+	
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <logger message="********** Input Mesg to be inserted into Queue is #[payload] ***********" level="INFO" doc:name="Logger"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\json_1.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	messageBody: write(payload,"application/json")
+} as :object {
+	class : "org.mule.modules.sqs.model.Message"
+}]]></dw:set-payload>
+        </dw:transform-message>
+
+        <sqs:send-message config-ref="Amazon_SQS__Configuration_CalQueue" doc:name="Amazon SQS"/>
+        <logger message="****** Update Flow is completed *****" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+</mule>
