@@ -21,6 +21,8 @@ http://www.mulesoft.org/schema/mule/secure-property-placeholder http://www.mules
                 </cors:methods>
                 <cors:headers>
                     <cors:header>Content-Type</cors:header>
+                    <cors:header>Accept</cors:header>
+                    <cors:header>Origin</cors:header>
                 </cors:headers>
             </cors:origin>
         </cors:origins>
